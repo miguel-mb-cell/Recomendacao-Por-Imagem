@@ -2,54 +2,51 @@ import torch
 from transformers import AutoImageProcessor, AutoModel
 from PIL import Image
 import faiss
-import numpy as np
-import os
 import time
 import json  # Adicionado para salvar os nomes dos arquivos
+import pandas as pd
+import io
+import requests
 
 # Carregar o modelo e processador
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 processor = AutoImageProcessor.from_pretrained("facebook/dinov2-small")
 model = AutoModel.from_pretrained("facebook/dinov2-small").to(device)
 
-# Listar todas as imagens no diretório do dataset
-images = []
-for root, dirs, files in os.walk("./dataset"):
-    for file in files:
-        if file.endswith("jpg"):
-            images.append(os.path.join(root, file))
+df = pd.read_csv("./dataset/fashion.csv")
 
+image_urls = df["ImageURL"].tolist()
 
-# Define uma função que normaliza embeddings e adiciona ao índice
-def add_vector_to_index(embedding, index, ids):
-    vector = embedding.detach().cpu().numpy()
-    vector = np.float32(vector)
-    faiss.normalize_L2(vector)
-    index.add(vector)
-    ids.append(image_id)
-
-
-# Criar o índice Faiss usando o tipo FlatL2 com 384 dimensões
+# Criar índice Faiss
 index = faiss.IndexFlatL2(384)
-ids = []
+ids = []  # Lista para armazenar IDs de imagens
 
 t0 = time.time()
-for image_path in images:
-    img = Image.open(image_path).convert("RGB")
-    with torch.no_grad():
-        inputs = processor(images=img, return_tensors="pt").to(device)
-        outputs = model(**inputs)
-    features = outputs.last_hidden_state
-    image_id = os.path.basename(image_path).split(".")[
-        0
-    ]  # Extraindo o ID da imagem do nome do arquivo
-    add_vector_to_index(features.mean(dim=1), index, ids)
+for idx, url in enumerate(image_urls):
+    try:
+        # Obter a imagem da URL
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        img = Image.open(io.BytesIO(response.content)).convert("RGB")
+        
+        # Pré-processar e extrair embeddings
+        with torch.no_grad():
+            inputs = processor(images=img, return_tensors="pt").to(device)
+            outputs = model(**inputs)
+        features = outputs.last_hidden_state
+        
+        # Normalizar e adicionar ao índice
+        vector = features.mean(dim=1).detach().cpu().numpy().astype("float32")
+        faiss.normalize_L2(vector)
+        index.add(vector)
+        ids.append(f"image_{idx}")  # Use um identificador para a imagem
+    except Exception as e:
+        print(f"Erro ao processar a URL {url}: {e}")
 
 print("Extração finalizada em:", time.time() - t0)
 
 # Salvamento do índice localmente
 faiss.write_index(index, "vector.index")
 
-# Salvamento dos nomes dos arquivos (IDs)
 with open("image_ids.json", "w") as f:
     json.dump(ids, f)

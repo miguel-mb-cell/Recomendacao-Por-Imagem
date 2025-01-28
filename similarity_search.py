@@ -1,5 +1,4 @@
 import faiss
-import numpy as np
 import torch
 from transformers import AutoImageProcessor, AutoModel
 from PIL import Image

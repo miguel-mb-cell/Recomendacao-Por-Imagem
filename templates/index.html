@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Viewer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-container img {
+            width: auto;
+            height: 350px;
+            border-radius: 8px;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(128, 128, 128, 0.5); /* Cinza com opacidade 0.5 */
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            border-radius: 8px;
+        }
+
+        .image-container:hover .overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            border-radius: 15px;
+            height: auto;
+            width: fit-content;
+            padding: 10px 15px;
+        }
+
+        .modal-content img {
+            height: 300px;
+            width: auto;
+        }
+
+        .modal-dialog {
+            position: relative;
+            top: 40%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            width: 90%;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 0;
+            right: 0px;
+            font-size: 2rem;
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 8px;
+            padding: 0px 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">Dataset Viewer</h1>
+
+    <!-- Filtros -->
+    <div class="d-flex justify-content-center mb-4">
+        <!-- Dropdown para Roupas Infantis -->
+        <div class="dropdown mx-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="roupasDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Roupas Infantis
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="roupasDropdown">
+                <li><a class="dropdown-item filter-link" href="#" data-filter="apparel=Boys">Meninos</a></li>
+                <li><a class="dropdown-item filter-link" href="#" data-filter="apparel=Girls">Meninas</a></li>
+            </ul>
+        </div>
+
+        <!-- Dropdown para Sapatos -->
+        <div class="dropdown mx-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="sapatosDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Sapatos
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sapatosDropdown">
+                <li><a class="dropdown-item filter-link" href="#" data-filter="footwear=Men">Masculino</a></li>
+                <li><a class="dropdown-item filter-link" href="#" data-filter="footwear=Women">Feminino</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Galeria de Imagens -->
+    <div class="container mt-5">    
+        <div class="row">
+            {% for image in images %}
+            <div class="col-md-4 position-relative">
+                <!-- Contêiner da imagem com a sobreposição de texto -->
+                <div class="image-container" data-bs-toggle="modal" data-bs-target="#imageModal">
+                    <img src="{{ image }}" class="img-fluid rounded mb-3" alt="Image">
+                    <!-- Texto sobre a imagem -->
+                    <div class="overlay">
+                        Clique para mostrar as recomendações
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+        <!-- Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+                <button class="close-modal" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Paginação -->
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ url_for('index', page=page-1, apparel=apparel, footwear=footwear) }}" class="btn btn-primary {% if page <= 1 %}disabled{% endif %}">
+            Anterior
+        </a>
+        <a href="{{ url_for('index', page=page+1, apparel=apparel, footwear=footwear) }}" class="btn btn-primary {% if page >= total_pages %}disabled{% endif %}">
+            Próximo
+        </a>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Adicionar evento aos links de filtro
+    document.querySelectorAll('.filter-link').forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            const filterParam = this.getAttribute('data-filter'); // Ex: roupas=Meninos
+            const baseUrl = window.location.href.split('?')[0]; // URL sem parâmetros
+            const newUrl = `${baseUrl}?${filterParam}&page=1`; // Adiciona filtro e reseta para a página 1
+            window.location.href = newUrl; // Redireciona
+        });
+    });
+    // Adicionar evento ao clique em imagens da galeria
+    document.querySelectorAll('.image-container').forEach(container => {
+        container.addEventListener('click', function () {
+            const imagePath = this.querySelector('img').getAttribute('src');
+            
+            fetch('http://127.0.0.1:5000/get_similar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ image_path: imagePath }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
+
+                    const similarImages = data.similar_images;
+                    const modalBody = document.querySelector('.modal-content');
+                    modalBody.innerHTML = ''; // Limpar conteúdo anterior
+
+                    similarImages.forEach(imgPath => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = imgPath;
+                        modalBody.appendChild(imgElement);
+                    });
+
+                    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+                    modal.show();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
