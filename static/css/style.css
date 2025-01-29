@@ -1,0 +1,82 @@
+body {
+    background-color: #dedede;
+}
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.image-container img {
+    width: auto;
+    height: 350px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #dedede;
+    color: black;
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    cursor: pointer;
+}
+
+.image-container:hover .overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    width: fit-content;
+    align-items: center;
+}
+
+.modal-body {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    border-radius: 15px;
+    height: auto;
+    width: fit-content;
+    padding: 10px 15px;
+}
+
+.modal-content img {
+    height: 300px;
+    width: auto;
+}
+
+.modal-dialog {
+    position: relative;
+    width: 100%;
+}
+
+#loader {
+    display: none;
+    margin-bottom: 5px;
+}
+
+#heroSection {
+    height: 300px;
+}
+
+#heroText {
+    max-width: 35%;
+}
+
+#titulo {
+    font-size: 3rem;
+}

@@ -4,91 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recomendação por Similaridade</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #dedede;
-        }
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .image-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .image-container img {
-            width: auto;
-            height: 350px;
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #dedede;
-            color: black;
-            font-size: 18px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            cursor: pointer;
-        }
-
-        .image-container:hover .overlay {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            width: fit-content;
-            align-items: center;
-        }
-
-        .modal-body {
-            display: flex;
-            justify-content: space-around;
-            flex-direction: row;
-            border-radius: 15px;
-            height: auto;
-            width: fit-content;
-            padding: 10px 15px;
-        }
-
-        .modal-content img {
-            height: 300px;
-            width: auto;
-        }
-
-        .modal-dialog {
-            position: relative;
-            width: 100%;
-        }
-
-        #loader {
-            display: none;
-            margin-bottom: 5px;
-        }
-
-        #heroSection {
-            height: 300px;
-        }
-
-        #heroText {
-            max-width: 35%;
-        }
-
-        #titulo {
-            font-size: 3rem;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 <div id="heroSection" class="d-flex align-items-center mb-5">
@@ -158,98 +75,20 @@
     
 
     <div class="d-flex justify-content-between mb-3">
-        <a href="{{ url_for('index', page=page-1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page <= 1 %}disabled{% endif %}">
+        <a href="{{ url_for('main.index', page=page-1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page <= 1 %}disabled{% endif %}">
             Anterior
         </a>
         <span class="d-flex align-items-center">Página {{ page }} de {{ total_pages }}</span>
-        <a href="{{ url_for('index', page=page+1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page >= total_pages %}disabled{% endif %}">
+        <a href="{{ url_for('main.index', page=page+1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page >= total_pages %}disabled{% endif %}">
             Próximo
         </a>
     </div>
 </div>
 
-<script>
-    document.querySelectorAll('.filter-link').forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            const filterParam = this.getAttribute('data-filter');
-            const baseUrl = window.location.href.split('?')[0];
-            const newUrl = `${baseUrl}?${filterParam}&page=1`;
-            window.location.href = newUrl;
-        });
-    });
-
-    document.querySelectorAll('.image-container').forEach(container => {
-        container.addEventListener('click', function () {
-            const imagePath = this.querySelector('img').getAttribute('src');
-
-            const modalBody = document.querySelector('.modal-body');
-            const images = modalBody.querySelectorAll('img');
-            images.forEach(img => img.remove());
-
-            const loader = document.getElementById("loader");
-
-            loader.style.display = "block";
-            
-            fetch('http://127.0.0.1:5000/get_similar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image_path: imagePath }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = "none";
-
-                    if (data.error) {
-                        console.error(data.error);
-                        return;
-                    }
-
-                    const similarImages = data.similar_images;
-
-                    similarImages.forEach(imgPath => {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = imgPath;
-                        modalBody.appendChild(imgElement);
-                    });
-
-                    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-                    modal.show();
-                })
-                .catch(error => {
-                    loader.style.display = "none";
-                    console.error('Error:', error)
-                });
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const apparelParam = urlParams.get('apparel');
-        const footwearParam = urlParams.get('footwear');
-    
-        const roupasButton = document.getElementById('roupasDropdown');
-        const sapatosButton = document.getElementById('sapatosDropdown');
-    
-        if (apparelParam) {
-            roupasButton.classList.remove('btn-secondary');
-            roupasButton.classList.add('btn-primary');
-            sapatosButton.classList.add('btn-secondary');
-            sapatosButton.classList.remove('btn-primary');
-        }
-    
-        if (footwearParam) {
-            sapatosButton.classList.remove('btn-secondary');
-            sapatosButton.classList.add('btn-primary');
-            roupasButton.classList.add('btn-secondary');
-            roupasButton.classList.remove('btn-primary');
-        }
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script src="/static/js/filtro.js"></script>
+<script src="/static/js/galeria_de_imagens.js"></script>
+<script src="/static/js/three.min.js"></script>
+<script src="/static/js/vanta.net.min.js"></script>
 <script>
 VANTA.NET({
   el: "#heroSection",
@@ -267,6 +106,6 @@ VANTA.NET({
   points: 6.50
 })
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
