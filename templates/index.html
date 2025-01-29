@@ -49,6 +49,7 @@
 
         .modal-content {
             width: fit-content;
+            align-items: center;
         }
 
         .modal-body {
@@ -72,12 +73,8 @@
         }
 
         #loader {
-            display: none; /* Oculto por padrão */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
+            display: none;
+            margin-bottom: 5px;
         }
 
         #heroSection {
@@ -164,6 +161,7 @@
         <a href="{{ url_for('index', page=page-1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page <= 1 %}disabled{% endif %}">
             Anterior
         </a>
+        <span class="d-flex align-items-center">Página {{ page }} de {{ total_pages }}</span>
         <a href="{{ url_for('index', page=page+1, apparel=apparel, footwear=footwear) }}" class="btn btn-secondary {% if page >= total_pages %}disabled{% endif %}">
             Próximo
         </a>
