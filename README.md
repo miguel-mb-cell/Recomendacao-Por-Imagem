@@ -15,7 +15,7 @@ DINOv2 (Self-supervised Vision Transformers) é um modelo de visão computaciona
 ## ⚡ FAISS
 FAISS (Facebook AI Similarity Search) é uma biblioteca de código aberto desenvolvida pela Meta AI para busca eficiente de vetores de alta dimensão. Ele é projetado para lidar com grandes volumes de dados e permite encontrar os vetores mais similares em um índice de maneira extremamente rápida. Utilizando técnicas de quantização, normalização e busca aproximada, FAISS é amplamente utilizado em aplicações como sistemas de recomendação, recuperação de imagens e busca semântica em bases de dados massivas.
 
-## 🚀 Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![Torch](https://img.shields.io/badge/Torch-1.7.1%2B-red)
@@ -68,7 +68,7 @@ O frontend foi criado com Flask para permitir a navegação do usuário pelo dat
 A rota `/get_similar` recebe a URL da imagem clicada e retorna uma lista de imagens similares com base na extração de embeddings usando `facebook/dinov2-small` e na busca vetorial com Faiss.
 
 
-# Como usar
+# 🚀 Como usar
 1. Certifique-se de usar uma versão do Python maior que a 3.8, mas recomendo a 3.12.6, que é a que usei para esse projeto
    - ```python --version```  
 2. Crie um abmiente virtual python usando o comando abaixo, ou através da IDE que estiver usando
