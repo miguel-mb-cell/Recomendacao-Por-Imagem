@@ -9,10 +9,10 @@ bem vindo ao meu projeto de Recomendação por Similaridade usando:
 Vamos ver como ele foi desenvolvido!
 
 ## 🦖 DINOv2
-Desenvolvido pela Meta, esse modelo foi pré-treinado com 142 milhões de imagens e foi lançado em abril de 2023.
+DINOv2 (Self-supervised Vision Transformers) é um modelo de visão computacional desenvolvido pela Meta AI. Ele utiliza aprendizado auto-supervisionado para extrair representações visuais ricas a partir de imagens, sem a necessidade de rótulos manuais. O modelo foi treinado em um conjunto massivo de 142 milhões de imagens, permitindo que ele aprenda representações altamente generalizáveis e úteis para tarefas como segmentação, classificação e busca por similaridade. Lançado em abril de 2023, DINOv2 é amplamente utilizado em aplicações que exigem extração eficiente de características visuais.
 
 ## ⚡ FAISS
-Facebook AI Similarity Search é uma biblioteca que permite indexar vetores para encontrar mais rapidamente os vetores mais similares dentro de determinado índice.
+FAISS (Facebook AI Similarity Search) é uma biblioteca de código aberto desenvolvida pela Meta AI para busca eficiente de vetores de alta dimensão. Ele é projetado para lidar com grandes volumes de dados e permite encontrar os vetores mais similares em um índice de maneira extremamente rápida. Utilizando técnicas de quantização, normalização e busca aproximada, FAISS é amplamente utilizado em aplicações como sistemas de recomendação, recuperação de imagens e busca semântica em bases de dados massivas.
 
 ## 🚀 Tecnologias Utilizadas
 
