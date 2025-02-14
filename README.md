@@ -4,6 +4,7 @@ bem vindo ao meu projeto de Recomendação por Similaridade usando:
 - O dataset [E-commerce Product Images](https://www.kaggle.com/datasets/vikashrajluhaniwal/fashion-images);
 - O modelo DINOv2 para extração de características das imagens;
 - O FAISS para indexação, gerando uma busca mais rápida dentro do dataset;
+- Poetry para organizar as dependências do projeto;
 - Flask para criar uma interface que possibilita utilizar a extração de características e indexação feitas de maneira visual e intuitiva!
   
 Vamos ver como ele foi desenvolvido!
@@ -66,6 +67,17 @@ O frontend foi criado com Flask para permitir a navegação do usuário pelo dat
 
 A rota `/get_similar` recebe a URL da imagem clicada e retorna uma lista de imagens similares com base na extração de embeddings usando `facebook/dinov2-small` e na busca vetorial com Faiss.
 
+
+# Como usar
+1. Certifique-se de usar uma versão do Python maior que a 3.8, mas recomendo a 3.12.6, que é a que usei para esse projeto
+   - ```python --version```  
+2. Crie um abmiente virtual python usando o comando abaixo, ou através da IDE que estiver usando
+   - ```python -m venv .venv```
+   - Certifique-se que a IDE está reconhecendo o interpretador da venv
+3. Instale o poetry na venv e instale as dependências com o poetry
+   - ```pip install poetry```
+   - ```poetry install```
+4. Execute o app.py que está na raiz do projeto
 
 # 📚 Referências
 - [CLIP Vs DINOv2 in image similarity](https://medium.com/aimonks/clip-vs-dinov2-in-image-similarity-6fa5aa7ed8c6)
